@@ -25,3 +25,31 @@ print("tensorflow: ", tf.__version__)
 print("numpy:      ", np.__version__)
 print("matplotlib: ", matplotlib.__version__)
 print("sklearn:    ", sklearn.__version__)
+
+
+# File Path
+TRAINFEATURES_FILE = "./data/train_values.csv"
+TRAINLABELS_FILE = "./data/train_labels.csv"
+TESTFEATURES_FILE = "./data/test_values.csv"
+
+
+# Load the Data
+X_full = pd.read_csv(TRAINFEATURES_FILE)
+y_full = pd.read_csv(TRAINLABELS_FILE)
+
+
+# EDA
+print("The shape of training data, X is ", X_full.shape)
+print("The shape of training label, y is ", y_full.shape)
+print("")
+print("Additional Information")
+print("Features")
+print(X_full.info())
+print("Labels")
+print(y_full.info())
+X_full.set_index(["building_id"], inplace=True)
+y_full.set_index(["building_id"], inplace=True)
+print("")
+print(X_full.head())
+print(y_full.head())
+
