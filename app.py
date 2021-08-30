@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Set page config
 apptitle = 'Earthquake Damage Predictor'
@@ -10,6 +11,13 @@ st.set_page_config(page_title=apptitle)
 
 # App Title
 st.title('Earthquake Damage Predictor')
+
+# Sub Title
+st.markdown("""
+Based on aspects of building location and construction, this app predicts the level of damage to buildings caused by the 2015 Gorkha earthquake in Nepal.
+* **Python libraries: ** Streamlit, Tensorflow 2, Pandas, Numpy, Seaborn
+* **Data Source: ** [Driven Data Competition - Richter's Predictor: Modeling Earthquake Damage ](https://www.drivendata.org/competitions/57/nepal-earthquake/)
+""")
 
 # File Path
 TRAINFEATURES_FILE = "./data/train_values.csv"
@@ -21,6 +29,8 @@ TESTFEATURES_FILE = "./data/test_values.csv"
 X_full = pd.read_csv(TRAINFEATURES_FILE)
 y_full = pd.read_csv(TRAINLABELS_FILE)
 
+# Sidebar
+st.sidebar.header("User Input Features")
 
 # EDA
 st.subheader("Data Exploration")
