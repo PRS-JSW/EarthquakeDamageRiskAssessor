@@ -89,15 +89,16 @@ st.markdown("""
 Features with correlation >= 0.7
 * count_floors_pre_eq: height_percentage (0.8)
 * has_secondary_use: has_secondary_use_agriculture (0.7)
-Inference: Majority of building are used for agriculture
+Therefore, it is likely that majority of buildings are also used for agriculture.
 """)
 
-# 5. Damage grade chart
-st.subheader('5. Damage grade chart')
+# 5. Observation of damage to building among geographic region
+st.subheader('5. Observation of damage to building among geographic region')
 geo1_dmg_chart = y_full.join(X_full['geo_level_1_id'])
-geo1_dmg_chart = geo1_dmg_chart.value_counts().reset_index()
-geo1_dmg_chart.columns = ['damage_grade','geo_level_1_id','counts']
 st.write(geo1_dmg_chart)
+fig, ax = plt.subplots(figsize=(12,12))
+sns.countplot(y="geo_level_1_id", hue="damage_grade", data=geo1_dmg_chart)
+st.pyplot(fig)
 
 # Step 2 - Feature Selection and Engineering
 st.header("Step 2 - Feature Selection and Engineering")
