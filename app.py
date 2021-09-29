@@ -92,8 +92,14 @@ Features with correlation >= 0.7
 Therefore, it is likely that majority of buildings are also used for agriculture.
 """)
 
-# 5. Observation of damage to building among geographic region
-st.subheader('5. Observation of damage to building among geographic region')
+# 5. Count of buildings with secondary uses
+st.subheader('5. Count of buildings with secondary uses')
+secondaryuse_df = X_full.iloc[:, 20:]
+st.write(secondaryuse_df)
+# st.write(secondaryuse_df[secondaryuse_df != 0].count())
+
+# 6. Observation of damage to building among geographic region
+st.subheader('6. Observation of damage to building among geographic region')
 geo1_dmg_chart = y_full.join(X_full['geo_level_1_id'])
 st.write(geo1_dmg_chart)
 fig, ax = plt.subplots(figsize=(12,12))
@@ -103,28 +109,33 @@ st.pyplot(fig)
 # Step 2 - Feature Selection and Engineering
 st.header("Step 2 - Feature Selection and Engineering")
 
+# Use random forest to check importance of features
+# 33 features, to encode categorical features and check for correlation
 
-# Step 3 - Data Modelling
-st.header("Step 3 - Data Modelling")
+# Normalise any numerical data required
 
+# Step 3 - Model Development and Training
+st.header("Step 3 - Model Development and Training")
 
+# Agenda for Model Development
+# 1. Logistic Regression (KK)
+# 2. Decision Tree (Sungmin)
+# 3. Random Forest (Ensemble of Decision Tree) (Sungmin)
+# 4. AdaBoost (KK)
+# 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
 
-# Step 4 - Model Development and Training
-st.header("Step 4 - Model Development and Training")
-
-
-# Step 5 - Model Validation and Evaluation
-st.header("Step 5 - Model Validation and Evaluation")
-
-
-
-
-# Step 6 - Model Selection
-st.header("Step 6 - Model Selection")
-
+# Step 4 - Model Validation and Evaluation
+st.header("Step 4 - Model Validation and Evaluation")
 
 
-# Step 7 - Model Deployment
-st.header("Step 7 - Model Deployment")
+
+
+# Step 5 - Model Selection
+st.header("Step 5 - Model Selection")
+
+
+
+# Step 6 - Model Deployment
+st.header("Step 6 - Model Deployment")
 
 
