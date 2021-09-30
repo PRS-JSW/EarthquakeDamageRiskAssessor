@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
 # Set page config
 apptitle = 'Earthquake Damage Predictor'
@@ -46,8 +48,12 @@ X_full.set_index(["building_id"], inplace=True)
 y_full.set_index(["building_id"], inplace=True)
 
 # 2. Analysis of Geographic Region Variables
+
+#Make a copy of features for data exploration purpose
+EDA_features = X_full.copy()
+
 st.subheader('2. Analysis of Geographic Region Variables - Relationship of Geographic Variable 1, 2 and 3')
-geo_df = X_full.groupby(['geo_level_1_id','geo_level_2_id','geo_level_3_id']).size().reset_index().rename(columns={0:'count'})
+geo_df = EDA_features.groupby(['geo_level_1_id','geo_level_2_id','geo_level_3_id']).size().reset_index().rename(columns={0:'count'})
 geo_df = geo_df.sort_values(['geo_level_1_id','geo_level_2_id','geo_level_3_id'])
 st.write(geo_df)
 st.markdown("""
@@ -57,7 +63,7 @@ Each geograhic variable 3 value corresponds to a geographic 2 value and therefor
 
 # 3. Frequency Distributions and Summary Statistics
 st.subheader('3. Frequency Distributions and Summary Statistics')
-vis_data = X_full.loc[:, ~X_full.columns.isin(['geo_level_1_id','geo_level_2_id','geo_level_3_id'])]
+vis_data = EDA_features.loc[:, ~X_full.columns.isin(['geo_level_1_id','geo_level_2_id','geo_level_3_id'])]
 
 # Plot histograms
 fig, ax = plt.subplots()
@@ -65,7 +71,7 @@ vis_data.hist(grid=True, figsize=(20,16), color='green', bins=5)
 st.pyplot(plt)
 
 # Summary Statistics
-st.write(X_full.describe().applymap('{:.2f}'.format).transpose())
+st.write(EDA_features.describe().applymap('{:.2f}'.format).transpose())
 
 st.markdown("""
 From the histograms and summary, it can be observed that the following binary variables denoting secondary uses of buildings have a mean close to 0:
@@ -79,28 +85,37 @@ From the histograms and summary, it can be observed that the following binary va
 * has_secondary_use_other
 """)
 
+# Convert Categorical Feature to Integers
+le = LabelEncoder()
+categorical_columns = ['land_surface_condition','foundation_type','roof_type','ground_floor_type','other_floor_type','position','plan_configuration','legal_ownership_status']
+for c in categorical_columns:
+    EDA_features[c] = le.fit_transform(EDA_features[c])
+
 # 4. Correlation of features
 st.subheader('4. Correlation of features')
-fig = plt.figure(figsize=(18, 18))
+fig = plt.figure(figsize=(20, 20))
 ax = plt.subplot(aspect='equal')
-sns.heatmap(X_full.corr(), annot=True, linewidths=.5, fmt= '.1f',ax=ax)
+sns.heatmap(EDA_features.corr(), annot=True, linewidths=.5, fmt= '.1f',ax=ax)
 st.write(fig)
 st.markdown("""
+_To enlarge image: Right click and select Open Image in New Tab._
+
 Features with correlation >= 0.7
-* count_floors_pre_eq: height_percentage (0.8)
-* has_secondary_use: has_secondary_use_agriculture (0.7)
-Therefore, it is likely that majority of buildings are also used for agriculture.
+* count_floors_pre_eq: height_percentage (0.8) is correlated as buildings with higher number of floors will likely be higher
+* has_secondary_use: feature has_secondary_use_agriculture (0.7) is a subset of has_secondary_use
 """)
 
 # 5. Count of buildings with secondary uses
 st.subheader('5. Count of buildings with secondary uses')
-secondaryuse_df = X_full.iloc[:, 20:]
-st.write(secondaryuse_df)
-# st.write(secondaryuse_df[secondaryuse_df != 0].count())
+secondaryuse_df = EDA_features.iloc[:, 27:]
+st.write(secondaryuse_df.astype(bool).sum(axis=0))
+st.markdown("""
+Total of 29,156 buildings with secondary uses with majority being used as agriculture and hotel.
+""")
 
 # 6. Observation of damage to building among geographic region
 st.subheader('6. Observation of damage to building among geographic region')
-geo1_dmg_chart = y_full.join(X_full['geo_level_1_id'])
+geo1_dmg_chart = y_full.join(EDA_features['geo_level_1_id'])
 st.write(geo1_dmg_chart)
 fig, ax = plt.subplots(figsize=(12,12))
 sns.countplot(y="geo_level_1_id", hue="damage_grade", data=geo1_dmg_chart)
@@ -108,6 +123,12 @@ st.pyplot(fig)
 
 # Step 2 - Feature Selection and Engineering
 st.header("Step 2 - Feature Selection and Engineering")
+drop_columns = ['geo_level_1_id','geo_level_2_id','count_floors_pre_eq','legal_ownership_status','has_secondary_use']
+X = X_full.drop(drop_columns,axis = 1)
+one_hot = pd.get_dummies(X, columns=['land_surface_condition','foundation_type','roof_type','ground_floor_type','other_floor_type','position','plan_configuration'], drop_first=True)
+
+# Split data into train and test set
+X_train,X_test,y_train,y_test = train_test_split(X,y_full,test_size=1/3,random_state=42, stratify=y_full)
 
 # Use random forest to check importance of features
 # 33 features, to encode categorical features and check for correlation
