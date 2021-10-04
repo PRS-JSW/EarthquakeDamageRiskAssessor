@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 import joblib
+import OrdinalClassifier
 
 def app():
     # File Path
@@ -74,6 +75,7 @@ def app():
 
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
+    # import class from OrdinalClassifier.py
 
     # Step 4 - Model Validation and Evaluation
     st.header("Step 4 - Model Validation and Evaluation")
