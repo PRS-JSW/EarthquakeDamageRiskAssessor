@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import f1_score
 import joblib
 from .OrdinalClassifier import OrdinalClassifier
 
@@ -82,10 +83,14 @@ def app():
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
+    st.subheader("Ordinal Classifier (Credit: Muhammad)")
     clf = OrdinalClassifier(DecisionTreeClassifier(max_depth=3))
-    clf.fit(X_train, np.ravel(y_train))
-    print(clf.predict(X_test))
-    
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    st.markdown("""
+    Micro-Averaged F1 Score:
+    """)
+    st.write(f1_score(y_test, y_pred, average='micro'))
 
     # Step 4 - Model Validation and Evaluation
     st.header("Step 4 - Model Validation and Evaluation")
