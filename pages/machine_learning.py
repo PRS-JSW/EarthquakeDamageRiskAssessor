@@ -1,3 +1,4 @@
+from numpy.core.numerictypes import maximum_sctype
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -5,8 +6,9 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 import joblib
-import OrdinalClassifier
+from .OrdinalClassifier import OrdinalClassifier
 
 def app():
     # File Path
@@ -35,7 +37,11 @@ def app():
     st.write(X.head(300))
 
     # 2. Inspect distribution of target variable
+    st.markdown("""
+    Value Counts of Damage Grade
+    """)
     st.write(y_full.value_counts())
+
     st.markdown("""
     One-hot encode categorical features using get_dummies and inspect distribution of target variable.
     """)
@@ -76,6 +82,10 @@ def app():
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
+    clf = OrdinalClassifier(DecisionTreeClassifier(max_depth=3))
+    clf.fit(X_train, np.ravel(y_train))
+    print(clf.predict(X_test))
+    
 
     # Step 4 - Model Validation and Evaluation
     st.header("Step 4 - Model Validation and Evaluation")

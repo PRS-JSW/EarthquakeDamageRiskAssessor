@@ -18,8 +18,8 @@ Based on aspects of building location and construction, this app predicts the le
 """)
 
 # Add all your applications (pages) here
-app.add_page("Data Exploration", data_analysis.app)
 app.add_page("Machine Learning", machine_learning.app)
+app.add_page("Data Exploration", data_analysis.app)
 
 # The main app
 app.run()
