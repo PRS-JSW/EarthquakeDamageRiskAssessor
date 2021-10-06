@@ -6,8 +6,9 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report, f1_score
 import joblib
 from .OrdinalClassifier import OrdinalClassifier
 
@@ -53,14 +54,17 @@ def app():
     # 3. Normalise training data using sklearn Standard Scalar
     scaler = StandardScaler().fit(X_train)
     X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
+    X_test = scaler.transform(X_test)    
+    y_train = np.ravel(y_train)
+    y_test = np.ravel(y_test)
+
 
     scaler_filename = './utils/features_scaler.joblib'
     joblib.dump(scaler, scaler_filename)
 
     # 4. Use random forest to check importance of features
     model = RandomForestClassifier(n_estimators = 10, criterion = 'gini', random_state = 42)
-    model.fit(X_train, np.ravel(y_train))
+    model.fit(X_train, y_train)
 
     # Plot the feature importance
     sorted_idx = model.feature_importances_.argsort()
@@ -74,23 +78,33 @@ def app():
 
     # Agenda for Model Development
     # 1. Logistic Regression (KK)
+    st.subheader("Logistic Regression")
 
 
     # 2. Decision Tree (Sungmin)
+    st.subheader("Decision Tree")
+
     # 3. Random Forest (Ensemble of Decision Tree) (Sungmin)
+    st.subheader("Random Forest")
+
     # 4. AdaBoost (KK)
+    st.subheader("AdaBoost")
 
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
     st.subheader("Ordinal Classifier (Credit: Muhammad)")
-    clf = OrdinalClassifier(DecisionTreeClassifier(max_depth=3))
+    dt = DecisionTreeClassifier(max_depth=3)
+    clf = OrdinalClassifier(dt)
     clf.fit(X_train, y_train)
+    y_pred_proba = clf.predict_proba(X_test)
     y_pred = clf.predict(X_test)
-    st.markdown("""
-    Micro-Averaged F1 Score:
-    """)
-    st.write(f1_score(y_test, y_pred, average='micro'))
+    test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
+    print(len(test_df))
+    st.write(test_df.head(300))
+
+    st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
+    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
     # Step 4 - Model Validation and Evaluation
     st.header("Step 4 - Model Validation and Evaluation")
