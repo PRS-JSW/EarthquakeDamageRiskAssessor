@@ -93,8 +93,8 @@ def app():
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
-    st.subheader("Ordinal Classifier (Credit: Muhammad)")
-    dt = DecisionTreeClassifier(max_depth=3)
+    st.subheader("Ordinal Classifier")
+    dt = DecisionTreeClassifier(max_depth=5)
     clf = OrdinalClassifier(dt)
     clf.fit(X_train, y_train)
     y_pred_proba = clf.predict_proba(X_test)
