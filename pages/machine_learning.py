@@ -26,32 +26,36 @@ def app():
 
     # Step 2 - Feature Selection and Engineering
     st.header("Feature Selection and Engineering")
-    drop_columns = ['geo_level_1_id','geo_level_2_id','count_floors_pre_eq','legal_ownership_status','has_secondary_use']
-    encode_features = ['land_surface_condition','foundation_type','roof_type','ground_floor_type','other_floor_type','position','plan_configuration', \
-                        'has_superstructure_adobe_mud','has_superstructure_mud_mortar_stone','has_superstructure_stone_flag','has_superstructure_cement_mortar_stone', \
-                        'has_superstructure_mud_mortar_brick','has_superstructure_cement_mortar_brick','has_superstructure_timber','has_superstructure_bamboo', \
-                        'has_superstructure_rc_non_engineered','has_superstructure_rc_engineered','has_superstructure_other','has_secondary_use_agriculture', \
-                        'has_secondary_use_hotel','has_secondary_use_rental','has_secondary_use_institution','has_secondary_use_school','has_secondary_use_industry', \
-                        'has_secondary_use_health_post','has_secondary_use_gov_office','has_secondary_use_use_police','has_secondary_use_other']
+    drop_columns = ['count_floors_pre_eq','legal_ownership_status','has_secondary_use']
+    encode_features = ['land_surface_condition','foundation_type','roof_type','ground_floor_type','other_floor_type','position','plan_configuration']
     X = X_full.drop(drop_columns,axis = 1)
-    # 1. One-hot encode categorical features using get_dummies
+
+    # 1. Mean Encoding for geographic ID with smoothing 'geo_level_1_id','geo_level_2_id','geo_level_3_id'
+    # Reference: https://www.geeksforgeeks.org/mean-encoding-machine-learning/, https://towardsdatascience.com/all-about-categorical-variable-encoding-305f3361fd02
+    df = pd.concat([X[['geo_level_1_id','geo_level_2_id','geo_level_3_id']],y_full],axis=1)
+    mean = df['damage_grade'].mean()
+    geo_features = ['geo_level_1_id','geo_level_2_id','geo_level_3_id']
+    for var in geo_features:
+        geo_agg = df.groupby(var)['damage_grade'].agg(['count','mean'])
+        counts = geo_agg['count']
+        means = geo_agg['mean']
+        weight = 100
+        smooth = (counts * means + weight * mean) / (counts + weight)
+        X[var] = X[var].map(smooth)
+
+    # 2. One-hot encode categorical features using get_dummies
     X = pd.get_dummies(X, columns=encode_features, drop_first=True)
     st.write(X.head(300))
 
-    # 2. Inspect distribution of target variable
-    st.markdown("""
-    Value Counts of Damage Grade
-    """)
-    st.write(y_full.value_counts())
-
-    st.markdown("""
-    One-hot encode categorical features using get_dummies and inspect distribution of target variable.
-    """)
+    # 3. Normalise the distribution for continuous variable using log
+    int_variables = ["age","area_percentage","height_percentage","count_families"]
+    for var in int_variables:
+        X[var] = np.log(X[[var]].replace(0, 1))
 
     # Split data into train and test set
     X_train,X_test,y_train,y_test = train_test_split(X, y_full, test_size=1/3, random_state=42, stratify=y_full)
 
-    # 3. Normalise training data using sklearn Standard Scalar
+    # 4. Normalise training data using sklearn Standard Scalar
     scaler = StandardScaler().fit(X_train)
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)    
