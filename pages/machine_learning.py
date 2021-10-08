@@ -67,13 +67,13 @@ def app():
     joblib.dump(scaler, scaler_filename)
 
     # 4. Use random forest to check importance of features
-    model = RandomForestClassifier(n_estimators = 10, criterion = 'gini', random_state = 42)
-    model.fit(X_train, y_train)
-
+    rf_clf = RandomForestClassifier(n_estimators = 10, criterion = 'gini', random_state = 42)
+    rf_clf.fit(X_train, y_train)
+    
     # Plot the feature importance
-    sorted_idx = model.feature_importances_.argsort()
+    sorted_idx = rf_clf.feature_importances_.argsort()
     fig, ax = plt.subplots(figsize=(12,12))
-    plt.barh(X.columns[sorted_idx], model.feature_importances_[sorted_idx])
+    plt.barh(X.columns[sorted_idx], rf_clf.feature_importances_[sorted_idx])
     plt.xlabel("Random Forest Feature Importance")
     st.pyplot(plt)
 
@@ -90,6 +90,12 @@ def app():
 
     # 3. Random Forest (Ensemble of Decision Tree) (Sungmin)
     st.subheader("Random Forest")
+    y_pred = rf_clf.predict(X_test)
+    test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
+    st.write(test_df.head(300))
+    
+    st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
+    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
     # 4. AdaBoost (KK)
     st.subheader("AdaBoost")
@@ -98,13 +104,11 @@ def app():
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
     st.subheader("Ordinal Classifier")
-    dt = DecisionTreeClassifier(max_depth=5)
+    dt = DecisionTreeClassifier()
     clf = OrdinalClassifier(dt)
     clf.fit(X_train, y_train)
-    y_pred_proba = clf.predict_proba(X_test)
     y_pred = clf.predict(X_test)
     test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
-    print(len(test_df))
     st.write(test_df.head(300))
 
     st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
