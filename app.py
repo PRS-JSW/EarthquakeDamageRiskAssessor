@@ -1,8 +1,14 @@
 import streamlit as st
 
+
+# DB Mgmt
+import sqlite3 
+conn = sqlite3.connect('data/buildingsdata.db')
+c = conn.cursor()
+
 # Custom imports 
 from multipage import MultiPage
-from pages import data_analysis, machine_learning
+from pages import input_form, data_analysis, machine_learning
 
 # Create an instance of the app 
 app = MultiPage()
@@ -18,8 +24,9 @@ Based on aspects of building location and construction, this app predicts the le
 """)
 
 # Add all your applications (pages) here
-app.add_page("Machine Learning", machine_learning.app)
+app.add_page("Input Form", input_form.app)
 app.add_page("Data Exploration", data_analysis.app)
+app.add_page("Machine Learning", machine_learning.app)
 
 # The main app
 app.run()
