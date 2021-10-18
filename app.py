@@ -1,11 +1,5 @@
 import streamlit as st
 
-
-# DB Mgmt
-import sqlite3 
-conn = sqlite3.connect('data/buildingsdata.db')
-c = conn.cursor()
-
 # Custom imports 
 from multipage import MultiPage
 from pages import input_form, data_analysis, machine_learning

@@ -1,12 +1,14 @@
 import streamlit as st
 import pandas as pd
+import sqlite3
+
+# Connect to Database
+conn = sqlite3.connect('data/buildingsdata.db', check_same_thread=False)
 
 def app():
-    # File Path
-    data = "./data/csv_building_structure.csv"
-
-    # Load the Data
-    df = pd.read_csv(data)
+    # Get all data from database
+    query = 'SELECT * FROM buildings_table'
+    df = pd.read_sql(query, conn)
 
     st.header("Add New Entry")
 
@@ -14,13 +16,12 @@ def app():
         building_id = df["building_id"].max() + 10
         st.write("Building ID: " + str(building_id))
         
-
         ward_id = st.selectbox("Ward ID: ", df["ward_id"].sort_values().unique())
 
-        count_floors_pre_eq = st.text_input("Number of floors in building: ", 1)
+        number_floors = st.text_input("Number of floors in building: ", 1)
         age_building = st.slider("Age of building: ", 1, 1000, 1)
-        plinth_area_sq_ft = st.text_input("Area of building(in sqft): ", 70)
-        height_ft_pre_eq = st.slider("Height of building(in ft): ", 1, 100, 1)
+        area_sq_ft = st.text_input("Area of building(in sqft): ", 70)
+        height_ft = st.slider("Height of building(in ft): ", 1, 100, 1)
 
         land_surface_condition = st.selectbox("Land Surface Condition: ", df["land_surface_condition"].sort_values().unique())
         foundation_type = st.selectbox("Type of Land Foundation: ", df["foundation_type"].sort_values().unique())
@@ -35,4 +36,12 @@ def app():
     
     if submit_button:
         st.success("New Entry Added!")
-        st.write(building_id, ward_id, count_floors_pre_eq)
+        st.write(building_id, ward_id, number_floors)
+
+        # df_insert = pd.DataFrame(columns=[])
+
+        # df_insert = df_insert.append({
+
+        # }, ignore_index=True)
+
+        # df_insert.to_sql('buildings_table', conn, if_exists='append', index=False)
