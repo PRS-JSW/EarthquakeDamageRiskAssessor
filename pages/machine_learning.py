@@ -22,7 +22,10 @@ def app():
     df = pd.read_sql(query, conn)
     # df.loc[:,'district_id'] = df.loc[:,'ward_id'].astype(str).str[:2].astype(int)
     df.loc[:,'mun_id'] = df.loc[:,'ward_id'].astype(str).str[:4].astype(int)
-    df.loc[:,'damage_grade'] = df.loc[:,'damage_grade'].astype(int) - 1
+    df.loc[:,'damage_grade'] = df.loc[:,'damage_grade'].astype(int)
+    df.loc[(df['damage_grade'].between(1,2,inclusive='both')),'damage_grade'] = 0
+    df.loc[(df['damage_grade'].between(3,4,inclusive='both')),'damage_grade'] = 1
+    df.loc[(df['damage_grade'] == 5),'damage_grade'] = 2
 
     # Duplicate dataframe as X without building_id, ward_id and number_floors
     X = df.loc[:,~df.columns.isin(['building_id','ward_id','number_floors'])].copy()
