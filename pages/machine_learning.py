@@ -12,6 +12,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report, f1_score
 import joblib
 from .OrdinalClassifier import OrdinalClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 # Connect to Database
 conn = sqlite3.connect('data/buildingsdata.db', check_same_thread=False)
@@ -114,6 +115,16 @@ def app():
     # 4. AdaBoost (KK)
     st.subheader("AdaBoost")
 
+    # 5. Linear Discriminant Analysis
+    st.subheader("Linear Discriminant Analysis")
+    model_lda = LinearDiscriminantAnalysis()
+    model_lda.fit(X_train, y_train)
+    y_pred = model_lda.predict(X_test)
+    test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
+    st.write(test_df.head(300))
+
+    st.text('Classification Report for Linear Discriminant Analysis:\n ' + classification_report(y_test, y_pred))
+    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
