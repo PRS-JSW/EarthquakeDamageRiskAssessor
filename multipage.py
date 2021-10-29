@@ -24,7 +24,7 @@ class MultiPage:
 
         self.pages.append({
           
-                "title": title, 
+                "title": title,
                 "function": func
             })
 

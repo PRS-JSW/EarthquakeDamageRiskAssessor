@@ -5,14 +5,17 @@ import pandas as pd
 import sqlite3
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, f1_score
 import joblib
 from .OrdinalClassifier import OrdinalClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+import joblib, json
 
 # Connect to Database
 conn = sqlite3.connect('data/buildingsdata.db', check_same_thread=False)
@@ -21,15 +24,19 @@ def app():
     # Get all data from database
     query = 'SELECT * FROM buildings_table'
     df = pd.read_sql(query, conn)
-    # df.loc[:,'district_id'] = df.loc[:,'ward_id'].astype(str).str[:2].astype(int)
+    df.loc[:,'district_id'] = df.loc[:,'ward_id'].astype(str).str[:2].astype(int)
     df.loc[:,'mun_id'] = df.loc[:,'ward_id'].astype(str).str[:4].astype(int)
     df.loc[:,'damage_grade'] = df.loc[:,'damage_grade'].astype(int)
-    df.loc[(df['damage_grade'].between(1,2,inclusive='both')),'damage_grade'] = 0
-    df.loc[(df['damage_grade'].between(3,4,inclusive='both')),'damage_grade'] = 1
-    df.loc[(df['damage_grade'] == 5),'damage_grade'] = 2
+    
+    # Get municipality distance to epicenter
+    # df_distance = pd.read_sql("SELECT municipality_codes, distanceto_epicenter FROM municipality_distance_epicenter", conn)
 
-    # Duplicate dataframe as X without building_id, ward_id and number_floors
-    X = df.loc[:,~df.columns.isin(['building_id','ward_id','number_floors'])].copy()
+    # Merge dataframes based on municipality codes
+    # df2 = pd.merge(df, df_distance, how='left', left_on='mun_id', right_on='municipality_codes')
+
+    # Duplicate dataframe as X without building_id and number_floors
+    X = df.loc[:,~df.columns.isin(['building_id','number_floors'])].copy()
+    # X = df2.loc[:,~df2.columns.isin(['building_id','number_floors','municipality_codes'])].copy()
     # print(X.head(100))
     # print(X.info())
     # print(X.describe())
@@ -44,8 +51,7 @@ def app():
         X.loc[:,feature] = np.log(X.loc[:,feature].replace(0, 1))
 
     # 2. Mean Encode Geographic Feature
-    geo_features = ['mun_id']
-    # 'district_id','ward_id'
+    geo_features = ['district_id','mun_id','ward_id']
 
     # Mean of damage grade
     mean = X.loc[:,'damage_grade'].mean()
@@ -55,12 +61,15 @@ def app():
         counts = geo_agg['count']
         means = geo_agg['mean']
         weight = 100
+        # Compute the "smoothed" means
         smooth = (counts * means + weight * mean) / (counts + weight)
         X.loc[:,var+'_weighted_mean'] = X.loc[:,var].map(smooth)
+        # Save the target mean encoding as dictionary in json file
+        json.dump(smooth.to_dict(), open("model/"+str(var)+"_map.json", 'w'))
 
     # Create target dataframe y and drop unused columns for X
     y = X.loc[:,'damage_grade'].copy()
-    X = X.loc[:,~X.columns.isin(['mun_id','plan_configuration','damage_grade'])]
+    X = X.loc[:,~X.columns.isin(['district_id','ward_id','mun_id','plan_configuration','damage_grade','number_floors'])]
 
     # 3. One-hot encode categorical features using get_dummies
     encode_features = ['land_surface_condition','foundation_type','roof_type','ground_floor_type',
@@ -78,7 +87,7 @@ def app():
     y_train = np.ravel(y_train)
     y_test = np.ravel(y_test)
 
-    scaler_filename = './utils/features_scaler.joblib'
+    scaler_filename = 'model/standard_scaler.joblib'
     joblib.dump(scaler, scaler_filename)
 
     # 4. Use random forest to check importance of features
@@ -98,7 +107,11 @@ def app():
     # Agenda for Model Development
     # 1. Logistic Regression (KK)
     st.subheader("Logistic Regression")
-
+    log_reg = LogisticRegression(random_state=42, solver='lbfgs', max_iter=150, n_jobs=-1)
+    model = log_reg.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    st.text('Classification Report for Logistic Regression:\n ' + classification_report(y_test, y_pred))
+    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
     # 2. Decision Tree (Sungmin)
     st.subheader("Decision Tree")
@@ -128,16 +141,16 @@ def app():
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
-    st.subheader("Ordinal Classifier")
-    dt = DecisionTreeClassifier()
-    clf = OrdinalClassifier(dt)
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
-    st.write(test_df.head(300))
+    # st.subheader("Ordinal Classifier")
+    # dt = DecisionTreeClassifier()
+    # clf = OrdinalClassifier(dt)
+    # clf.fit(X_train, y_train)
+    # y_pred = clf.predict(X_test)
+    # test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
+    # st.write(test_df.head(300))
 
-    st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+    # st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
+    # st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
     # Step 4 - Model Validation and Evaluation
     st.header("Step 4 - Model Validation and Evaluation")
@@ -148,7 +161,9 @@ def app():
     # Step 5 - Model Selection
     st.header("Step 5 - Model Selection")
 
-
+    # Save model and scaler
+    model_filename = 'model/risk_assess_model.joblib'
+    joblib.dump(model, model_filename)
 
     # Step 6 - Model Deployment
     st.header("Step 6 - Model Deployment")
