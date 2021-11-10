@@ -128,5 +128,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-utils/features_scaler.joblib
 data/buildingsdata.db
