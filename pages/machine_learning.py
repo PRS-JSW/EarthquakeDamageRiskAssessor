@@ -172,19 +172,19 @@ def app():
     del xgb_model
 
     # 6. Voting Classifier (WL)
-    st.subheader("Model 6 - Voting Classifier")
-    vot_clf = VotingClassifier(estimators=[('rf', rf_clf), ('xgb', xgb_clf)], voting='soft', weights=[1, 2])
-    votclf_model = vot_clf.fit(X_train, y_train)
+    # st.subheader("Model 6 - Voting Classifier")
+    # vot_clf = VotingClassifier(estimators=[('rf', rf_clf), ('xgb', xgb_clf)], voting='soft', weights=[1, 2])
+    # votclf_model = vot_clf.fit(X_train, y_train)
 
-    y_pred = votclf_model.predict(X_test)
-    st.text('Classification Report for Voting Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+    # y_pred = votclf_model.predict(X_test)
+    # st.text('Classification Report for Voting Classifier:\n ' + classification_report(y_test, y_pred))
+    # st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
-    # Save model
-    model_filename = 'model/votclf_model.joblib'
-    joblib.dump(votclf_model, model_filename)
+    # # Save model
+    # model_filename = 'model/votclf_model.joblib'
+    # joblib.dump(votclf_model, model_filename)
 
-    del votclf_model
+    # del votclf_model
 
     # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py

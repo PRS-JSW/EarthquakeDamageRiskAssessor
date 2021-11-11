@@ -37,6 +37,8 @@ def app():
         # st.dataframe(df_municipality)
         df_municipality.to_sql('municipality_distance_epicenter', conn, if_exists='replace', index=False)
 
+        st.success('Distance to epicentre updated successfully.')
+
     st.header("Update Location of Epicenter")
     
     with st.form("update_epicenter"):
