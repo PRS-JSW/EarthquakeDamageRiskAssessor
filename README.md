@@ -1,1 +1,1 @@
-# EarthquakeDamagePredictor
+# EarthquakeDamageRiskAssessor
