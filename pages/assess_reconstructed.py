@@ -97,9 +97,9 @@ def app():
             grade_text = " (Major repair required)"
         if (dmg_grade == 2):
             grade_text = " (Total reconstruction required)"
-        st.markdown("*Predicted Damage Risk of Reconstructed Building: " + str(dmg_grade) + "*" + grade_text)
+        st.info("Assessed Damage Risk of Reconstructed Building: " + str(dmg_grade) + grade_text + ".")
 
-    st.header("Evaluate Damage Risk of Reconstructed Building")
+    st.header("Assess Damage Risk of Reconstructed Building")
 
     with st.form("input_form"):
         # Ward ID

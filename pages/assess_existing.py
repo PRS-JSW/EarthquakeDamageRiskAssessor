@@ -28,7 +28,7 @@ def app():
         df_search = pd.read_sql(query, conn)
 
         if(len(df_search) > 0):
-            st.header("Re-Evaluate Damage Risk")
+            st.header("Assess Damage Risk of Existing Building")
 
             col1, col2 = st.columns(2)
 
@@ -87,7 +87,7 @@ def app():
                     has_superstructure_other = st.checkbox('Other Materials', key='has_superstructure_other', value=df_search["has_superstructure_other"][0].item())
 
                     # Call reevaluate_building_risk function to set session state of reevaluate_building_risk to True
-                    submit_button = st.form_submit_button("Re-evaluate Building Damage Risk", on_click=reevaluate_building_risk)
+                    submit_button = st.form_submit_button("Assess Existing Building Damage Risk", on_click=reevaluate_building_risk)
 
             with col2:
                 with st.container():
@@ -227,11 +227,11 @@ def app():
                             grade_text = " (Total reconstruction required)"
                         # Up or down, comments of damage grade
                         if (dmg_grade > int(current_damage_grade)):
-                            st.markdown("** Predicted Damage Grade: " + str(dmg_grade) + "**" + " :arrow_up:" + grade_text)
+                            st.markdown("** Assessed Damage Risk of Existing Building: " + str(dmg_grade) + "**" + " :arrow_up:" + grade_text)
                         if (dmg_grade < int(current_damage_grade)):
-                            st.markdown("** Predicted Damage Grade: " + str(dmg_grade) + "**" + " :arrow_down:" + grade_text)
+                            st.markdown("** Assessed Damage Risk of Existing Building: " + str(dmg_grade) + "**" + " :arrow_down:" + grade_text)
                         if (dmg_grade == int(current_damage_grade)):
-                            st.markdown("** Predicted Damage Grade: " + str(dmg_grade) + "**" + grade_text)
+                            st.markdown("** Assessed Damage Risk of Existing Building: " + str(dmg_grade) + "**" + grade_text)
 
         else:
             st.warning("No record found for building ID " + st.session_state.search_building_ID + ".")
@@ -244,7 +244,7 @@ def app():
         evaluate_building_risk()
 
     with st.form("search_form"):
-        st.header("Retrieve Building Data Record")
+        st.header("Retrieve Existing Building Record")
 
         building_id = st.text_input("Search Building ID: ", 120101000011, key='search_building_ID')
 
