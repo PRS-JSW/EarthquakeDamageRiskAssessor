@@ -19,7 +19,7 @@ import joblib, sqlite3
 conn = sqlite3.connect('data/buildingsdata.db', check_same_thread=False)
 
 def app():
-    # Default session state of retrain_model_sel set to None
+    # Initialize session state of retrain_model_sel
     if 'retrain_model_sel' not in st.session_state:
         st.session_state['retrain_model_sel'] = 'No'
 
