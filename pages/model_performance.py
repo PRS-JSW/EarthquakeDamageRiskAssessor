@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, f1_score, precision_score, log_loss
+from sklearn.tree import DecisionTreeClassifier
+from .OrdinalClassifier import OrdinalClassifier
 import joblib, sqlite3
 from collections import Counter
 
@@ -68,7 +70,7 @@ def app():
     del log_reg_model
     
     # 2. Linear Discriminant Analysis
-    st.subheader("Model 5 - Linear Discriminant Analysis")
+    st.subheader("Model 2 - Linear Discriminant Analysis")
     model_filename = 'model/lda_model.joblib'
     lda_model = joblib.load(model_filename)
     y_pred = lda_model.predict(X_test)
@@ -77,20 +79,33 @@ def app():
                                                                                   str(f1_score(y_test, y_pred, average='micro').round(4)) ))
 
     del lda_model
-    
-    # 3. MLP Classifier (Neural Net)
-    st.subheader("Model 2 - MLP Classifier")
-    # model_filename = 'model/mlpclf_model.joblib'
-    # mlpclf_model = joblib.load(model_filename)
-    # y_pred = mlpclf_model.predict(X_test)
-    # st.text('Classification Report for MLP Classifier:\n ' + classification_report(y_test, y_pred))
-    # st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-    #                                                                               str(f1_score(y_test, y_pred, average='micro').round(4)) ))
 
-    # del mlpclf_model
+    # 3. Ordinal Classifier
+    st.subheader("Model 3 - Ordinal Classifier")
+    model_filename = 'model/ordclf_model.joblib'
+
+    dt = DecisionTreeClassifier()
+    clf = OrdinalClassifier(dt)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
+    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
+                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
+    del clf
+
+    # 4. MLP Classifier (Neural Net)
+    st.subheader("Model 4 - MLP Classifier")
+    model_filename = 'model/mlpclf_model.joblib'
+    mlpclf_model = joblib.load(model_filename)
+    y_pred = mlpclf_model.predict(X_test)
+    st.text('Classification Report for MLP Classifier:\n ' + classification_report(y_test, y_pred))
+    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
+                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
+
+    del mlpclf_model
     
-    # 4. Random Forest (Ensemble of Decision Tree)
-    st.subheader("Model 3 - Random Forest Classifier")
+    # 5. Random Forest (Ensemble of Decision Tree)
+    st.subheader("Model 5 - Random Forest Classifier")
     model_filename = 'model/randomforest_model.joblib'
     rf_clf_model = joblib.load(model_filename)
     y_pred = rf_clf_model.predict(X_test)
@@ -99,8 +114,8 @@ def app():
                                                                                   str(f1_score(y_test, y_pred, average='micro').round(4)) ))
     del rf_clf_model
     
-    # 5. XGBoost
-    st.subheader("Model 4 - XGBoost Classifier")
+    # 6. XGBoost
+    st.subheader("Model 6 - XGBoost Classifier")
     model_filename = 'model/xgboost_model.joblib'
     xgb_model = joblib.load(model_filename)
     y_pred = xgb_model.predict(X_test)
@@ -109,12 +124,3 @@ def app():
                                                                                   str(f1_score(y_test, y_pred, average='micro').round(4)) ))
     del xgb_model
 
-    # 6. Ordinal Classifier
-    # st.subheader("Model 7 - Ordinal Classifier")
-    # model_filename = 'model/ordclf_model.joblib'
-    # ordclf_model = joblib.load(model_filename)
-    # y_pred = ordclf_model.predict(X_test)
-    # st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
-    # st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-    #                                                                               str(f1_score(y_test, y_pred, average='micro').round(4)) ))
-    # del ordclf_model

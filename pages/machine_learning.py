@@ -5,7 +5,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from .OrdinalClassifier import OrdinalClassifier
@@ -110,7 +111,7 @@ def app():
             log_reg_model = log_reg.fit(X_train, y_train)
             y_pred = log_reg_model.predict(X_test)
             st.text('Classification Report for Logistic Regression:\n ' + classification_report(y_test, y_pred))
-            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
 
             # Save model
             model_filename = 'model/logreg_model.joblib'
@@ -119,7 +120,7 @@ def app():
             del log_reg_model
 
             # 2. Linear Discriminant Analysis (WL)
-            st.subheader("Model 5 - Linear Discriminant Analysis")
+            st.subheader("Model 2 - Linear Discriminant Analysis")
             model_lda = LinearDiscriminantAnalysis(solver='svd')
             # grid_param = {"solver": ["svd", "lsqr", "eigen"], "tol" : [0.0001,0.0002,0.0003]}
             # grid_LDA = GridSearchCV(model_lda, param_grid=grid_param, scoring="f1_micro", cv=5, n_jobs=-1, verbose = 3)
@@ -130,7 +131,7 @@ def app():
             # test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
             # st.write(test_df.head(300))
             st.text('Classification Report for Linear Discriminant Analysis:\n ' + classification_report(y_test, y_pred))
-            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
 
             # Save model
             model_filename = 'model/lda_model.joblib'
@@ -138,40 +139,50 @@ def app():
 
             del lda_model
 
-            # 3. MLP Classifier (Sungmin)
-            st.subheader("Model 2 - MLP Classifier")
+            # 3. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
+            st.subheader("Model 3 - Ordinal Classifier")
+            dt = DecisionTreeClassifier()
+            clf = OrdinalClassifier(dt)
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
 
-            # mlp_clf = MLPClassifier(hidden_layer_sizes=(10, 30, 3), max_iter=150)
-            # mlpclf_model = mlp_clf.fit(X_train, y_train)
-            # y_pred = mlpclf_model.predict(X_test)
-            # st.text('Classification Report for MLP Classifier:\n ' + classification_report(y_test, y_pred))
-            # st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+            st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
+            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
+
+            # 4. MLP Classifier (Sungmin)
+            st.subheader("Model 4 - MLP Classifier")
+
+            mlp_clf = MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=110)
+            mlpclf_model = mlp_clf.fit(X_train, y_train)
+            y_pred = mlpclf_model.predict(X_test)
+            st.text('Classification Report for MLP Classifier:\n ' + classification_report(y_test, y_pred))
+            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
 
             # Save model
-            # model_filename = 'model/mlpclf_model.joblib'
-            # joblib.dump(mlpclf_model, model_filename)
+            model_filename = 'model/mlpclf_model.joblib'
+            joblib.dump(mlpclf_model, model_filename)
 
-            # del mlpclf_model
+            del mlpclf_model
 
-            # 4. Random Forest (Ensemble of Decision Tree) (Sungmin)
-            st.subheader("Model 3 - Random Forest Classifier")
+            # 5. Random Forest (Ensemble of Decision Tree) (Sungmin)
+            st.subheader("Model 5 - Random Forest Classifier")
             y_pred = rf_clf_model.predict(X_test)
             st.text('Classification Report for Random Forest Classifier:\n ' + classification_report(y_test, y_pred))
-            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
 
             # Save model
             model_filename = 'model/randomforest_model.joblib'
-            joblib.dump(rf_clf_model, model_filename, compress=9)
+            joblib.dump(rf_clf_model, model_filename)
 
             del rf_clf_model
 
-            # 5. XGBoost (KK)
-            st.subheader("Model 4 - XGBoost Classifier")
+            # 6. XGBoost (KK)
+            st.subheader("Model 6 - XGBoost Classifier")
             xgb_clf = XGBClassifier(max_depth=7, objective=['multi:softmax', 'eval_metric:merror'], use_label_encoder=False, n_estimators=100)
             xgb_model = xgb_clf.fit(X_train, y_train)
             y_pred = xgb_model.predict(X_test)
             st.text('Classification Report for XGBoost Classifier:\n ' + classification_report(y_test, y_pred))
-            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
 
             # Save model
             model_filename = 'model/xgboost_model.joblib'
@@ -179,23 +190,6 @@ def app():
 
             del xgb_model
 
-            # 6. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
-            #import class from OrdinalClassifier.py
-            st.subheader("Ordinal Classifier")
-            dt = DecisionTreeClassifier()
-            clf = OrdinalClassifier(dt)
-            ordclf_model = clf.fit(X_train, y_train)
-            y_pred = clf.predict(X_test)
-
-            st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
-            st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
-
-            # Save model
-            model_filename = 'model/ordclf_model.joblib'
-            joblib.dump(ordclf_model, model_filename)
-
-            del ordclf_model
-            
             st.info('Retraining of the models completed.')
 
         if (st.session_state['retrain_model_sel']=='No'):
