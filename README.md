@@ -81,7 +81,7 @@ With the lesson learnt from the various report and studies, we would like to uti
 
    | **No** | **Package** | **Version** |
    |----|---------|---------|
-   | 1 | haversine | 1.1.2 |
+   | 1 | haversine | 2.5.1 |
    | 2 | joblib | 1.1.0 |
    | 3 | matplotlib | 3.4.3 |
    | 4 | numpy | 1.21.4 |
