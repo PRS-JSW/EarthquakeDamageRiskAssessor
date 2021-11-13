@@ -18,11 +18,12 @@ import joblib, sqlite3
 conn = sqlite3.connect('data/buildingsdata.db', check_same_thread=False)
 
 def app():
+    # Default session state of retrain_model_sel set to False
+    st.session_state['retrain_model_sel'] = False
 
     def retrain_model():
-        
         #Check if user wants to update models
-        if (retrain_model_sel=="Yes"):
+        if (st.session_state['retrain_model_sel']=='Yes'):
             # Get all data from database
             query = 'SELECT * FROM buildings_table'
             df = pd.read_sql(query, conn)
@@ -196,13 +197,14 @@ def app():
             
             st.info('Retraining of the models completed.')
 
-        if (retrain_model_sel=="No"):
-            st.info('Models are not retrained.')
+            if (st.session_state['retrain_model_sel']=='No'):
+                st.info('Models are not retrained.')
+
 
     with st.form("update_model"):
         st.header("Retrain Models")
 
-        retrain_model_sel = st.selectbox("Do you want to retrain the models?", ('Yes', 'No'))
+        model_update = st.selectbox("Do you want to retrain the models?", options=('No', 'Yes'))
 
         # Call evaluate_building_risk function
         submit_button = st.form_submit_button("Retrain", on_click=retrain_model)
