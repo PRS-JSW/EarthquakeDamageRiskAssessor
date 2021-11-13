@@ -34,7 +34,7 @@ With the lesson learnt from the various report and studies, we would like to uti
 
 ## SECTION 6 : SYSTEM ARCHITECTURE
 
-<img src="misc/Earthquake Damage Risk Assessor System Architecture.png" style="float: left; margin-right: 0px;" />
+<img src="misc/Earthquake Damage Risk Assessor System Architecture.jpg" style="float: left; margin-right: 0px;" />
 
 ## SECTION 7 : INSTALLATION AND USER GUIDE
 
