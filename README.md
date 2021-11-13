@@ -113,7 +113,7 @@ With the lesson learnt from the various report and studies, we would like to uti
    <img src="misc/Step9.png" style="float: left; margin-right: 0px;" />
 
 **Part 2 - To assess the damage risk of Reconstructed Building**
-1. On the “Assess Damage Risk of Reconstructed Building page, input and select details of the building in the fields and click Submit.
+1. On the “Assess Damage Risk of Reconstructed Building" page, input and select details of the building in the fields and click Submit.
 
    <img src="misc/Step9.png" style="float: left; margin-right: 0px;" />
 
