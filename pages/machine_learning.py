@@ -152,6 +152,8 @@ def app():
             st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
             st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro').round(4)))
 
+            del dt, clf
+
             # 4. MLP Classifier (Sungmin)
             st.subheader("Model 4 - MLP Classifier")
 

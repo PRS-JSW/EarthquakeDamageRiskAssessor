@@ -81,13 +81,13 @@ def app():
     st.subheader("Model 3 - Ordinal Classifier")
     model_filename = 'model/ordclf_model.joblib'
 
-    dt = DecisionTreeClassifier()
+    dt = DecisionTreeClassifier(max_depth=12, min_samples_leaf=20, max_leaf_nodes=90)
     clf = OrdinalClassifier(dt)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
     st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
-    del clf
+    del dt, clf
 
     # 4. MLP Classifier (Neural Net)
     st.subheader("Model 4 - MLP Classifier")
