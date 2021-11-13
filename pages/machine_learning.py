@@ -26,6 +26,9 @@ def app():
     def retrain_model():
         #Check if user wants to update models
         if (st.session_state['retrain_model_sel']=='Yes'):
+
+            st.info('Estimated duration of retraining of the models is 20mins.')
+
             # Get all data from database
             query = 'SELECT * FROM buildings_table'
             df = pd.read_sql(query, conn)
@@ -152,7 +155,7 @@ def app():
             # 4. MLP Classifier (Sungmin)
             st.subheader("Model 4 - MLP Classifier")
 
-            mlp_clf = MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=110)
+            mlp_clf = MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=110, learning_rate='adaptive', random_state=42)
             mlpclf_model = mlp_clf.fit(X_train, y_train)
             y_pred = mlpclf_model.predict(X_test)
             st.text('Classification Report for MLP Classifier:\n ' + classification_report(y_test, y_pred))

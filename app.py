@@ -16,7 +16,7 @@ app = MultiPage()
 app.add_page("Assess Damage Risk of Reconstructed Building", assess_reconstructed.app)
 app.add_page("Assess Damage Risk of Existing Building", assess_existing.app)
 app.add_page("Update Epicentre Location", update_epicentre.app)
-app.add_page("Data Exploration & Analysis", data_analysis.app)
+app.add_page("Data Exploration and Analysis", data_analysis.app)
 app.add_page("Model Performance and Evaluation", model_performance.app)
 app.add_page("Model Development", machine_learning.app)
 

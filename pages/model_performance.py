@@ -65,8 +65,7 @@ def app():
     log_reg_model = joblib.load(model_filename)
     y_pred = log_reg_model.predict(X_test)
     st.text('Classification Report for Logistic Regression:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                               str(f1_score(y_test, y_pred, average='micro').round(4)) ))
+    st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
     del log_reg_model
     
     # 2. Linear Discriminant Analysis
@@ -75,9 +74,7 @@ def app():
     lda_model = joblib.load(model_filename)
     y_pred = lda_model.predict(X_test)
     st.text('Classification Report for Linear Discriminant Analysis:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
-
+    st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
     del lda_model
 
     # 3. Ordinal Classifier
@@ -89,8 +86,7 @@ def app():
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
+    st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
     del clf
 
     # 4. MLP Classifier (Neural Net)
@@ -99,9 +95,7 @@ def app():
     mlpclf_model = joblib.load(model_filename)
     y_pred = mlpclf_model.predict(X_test)
     st.text('Classification Report for MLP Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
-
+    st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
     del mlpclf_model
     
     # 5. Random Forest (Ensemble of Decision Tree)
@@ -110,8 +104,7 @@ def app():
     rf_clf_model = joblib.load(model_filename)
     y_pred = rf_clf_model.predict(X_test)
     st.text('Classification Report for Random Forest Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
+    st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
     del rf_clf_model
     
     # 6. XGBoost
@@ -120,7 +113,6 @@ def app():
     xgb_model = joblib.load(model_filename)
     y_pred = xgb_model.predict(X_test)
     st.text('Classification Report for XGBoost Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
+    st.text("F1 score (micro): {}".format(str(f1_score(y_test, y_pred, average='micro').round(4))))
     del xgb_model
 
