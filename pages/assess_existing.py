@@ -5,8 +5,9 @@ import numpy as np
 import sqlite3, joblib, json
 
 def app():
-    # Default session state of reevaluate_building_risk set to False
-    st.session_state['reevaluate_building_risk'] = False
+    # Initialize session state of reevaluate_building_risk
+    if 'retrain_model_sel' not in st.session_state:
+        st.session_state['reevaluate_building_risk'] = False
 
     def evaluate_building_risk():
         # Connect to Database
