@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from xgboost import XGBClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -172,20 +173,18 @@ def app():
     del xgb_model
 
     # 6. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
-    # import class from OrdinalClassifier.py
-    # st.subheader("Ordinal Classifier")
-    # dt = DecisionTreeClassifier()
-    # clf = OrdinalClassifier(dt)
-    # ordclf_model = clf.fit(X_train, y_train)
-    # y_pred = clf.predict(X_test)
-    # test_df = pd.DataFrame(np.stack((y_test, y_pred),axis=-1), columns=['y_test', 'y_pred'])
-    # st.write(test_df.head(300))
+    #import class from OrdinalClassifier.py
+    st.subheader("Ordinal Classifier")
+    dt = DecisionTreeClassifier()
+    clf = OrdinalClassifier(dt)
+    ordclf_model = clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
-    # st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
-    # st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
+    st.text('Classification Report for Ordinal Classifier:\n ' + classification_report(y_test, y_pred))
+    st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
 
     # Save model
-    # model_filename = 'model/ordclf_model.joblib'
-    # joblib.dump(ordclf_model, model_filename)
+    model_filename = 'model/ordclf_model.joblib'
+    joblib.dump(ordclf_model, model_filename)
 
-    # del ordclf_model
+    del ordclf_model
