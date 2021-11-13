@@ -144,7 +144,7 @@ def app():
 
             # 3. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
             st.subheader("Model 3 - Ordinal Classifier")
-            dt = DecisionTreeClassifier()
+            dt = DecisionTreeClassifier(max_depth=12, min_samples_leaf=20, max_leaf_nodes=90)
             clf = OrdinalClassifier(dt)
             clf.fit(X_train, y_train)
             y_pred = clf.predict(X_test)
