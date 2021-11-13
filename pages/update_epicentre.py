@@ -39,7 +39,7 @@ def app():
 
         st.success('Distance to epicentre updated successfully.')
 
-    st.header("Update Location of Epicenter")
+    st.header("Update Location of Epicentre")
     
     with st.form("update_epicenter"):
         nepal_epicenter = {'municipality':'Nepal 2015 Earthquake', 'latitude':28.23, 'longitude':84.731, 'distanceto_epicenter':0}
@@ -47,6 +47,6 @@ def app():
         df_municipality_list = df_municipality2.loc[:,'municipality']
 
         # index=position_index,
-        epicenter_location = st.selectbox("Location of New Epicenter (Nearest Municipality): ", df_municipality_list, index=112, key='epicenter_loc')
+        epicenter_location = st.selectbox("Location of New Epicentre (Nearest Municipality): ", df_municipality_list, index=112, key='epicenter_loc')
 
         submit_button = st.form_submit_button("Submit", on_click=update_distance)

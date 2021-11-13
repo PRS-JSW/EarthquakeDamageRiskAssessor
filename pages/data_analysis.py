@@ -13,8 +13,16 @@ def app():
     # Get all data from database
     query = 'SELECT * FROM buildings_table'
     df = pd.read_sql(query, conn)
-    X = df.loc[:,~df.columns.isin(['building_id', 'damage_grade'])]
-    y = df.loc[:,"damage_grade"]
+    df.loc[:,'mun_id'] = df.loc[:,'ward_id'].astype(str).str[:4].astype(int)
+
+    # Get municipality distance to epicenter
+    df_distance = pd.read_sql("SELECT municipality_codes, distanceto_epicenter FROM municipality_distance_epicenter", conn)
+
+    # Merge dataframes based on municipality codes
+    df2 = pd.merge(df, df_distance, how='left', left_on='mun_id', right_on='municipality_codes')
+
+    X = df2.loc[:,~df2.columns.isin(['building_id', 'damage_grade','ward_id','mun_id','municipality_codes'])]
+    y = df2.loc[:,"damage_grade"]
 
     # Step 1 - Data Exploration
     st.header("Data Exploration and Analysis")
@@ -33,7 +41,7 @@ def app():
 
     # 2. Frequency Distributions and Summary Statistics
     st.subheader('2. Frequency Distributions and Summary Statistics')
-    num_features = ['number_floors','age_building','area_sq_ft','height_ft']
+    num_features = ['number_floors','age_building','area_sq_ft','height_ft','distanceto_epicenter']
     num_data = EDA_features.loc[:, num_features]
 
     # Plot histograms

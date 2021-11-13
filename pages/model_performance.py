@@ -109,17 +109,7 @@ def app():
                                                                                   str(f1_score(y_test, y_pred, average='micro').round(4)) ))
     del xgb_model
 
-    # 6. Voting Classifier
-    st.subheader("Model 6 - Voting Classifier")
-    model_filename = 'model/votclf_model.joblib'
-    votclf_model = joblib.load(model_filename)
-    y_pred = votclf_model.predict(X_test)
-    st.text('Classification Report for Voting Classifier:\n ' + classification_report(y_test, y_pred))
-    st.text("Precision (micro): {0}, F1 score (micro): {1}".format(str(precision_score(y_test, y_pred, average='micro').round(4)), 
-                                                                                  str(f1_score(y_test, y_pred, average='micro').round(4)) ))
-    del votclf_model
-
-    # 7. Ordinal Classifier
+    # 6. Ordinal Classifier
     # st.subheader("Model 7 - Ordinal Classifier")
     # model_filename = 'model/ordclf_model.joblib'
     # ordclf_model = joblib.load(model_filename)

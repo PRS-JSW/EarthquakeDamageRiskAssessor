@@ -83,7 +83,7 @@ def app():
     joblib.dump(scaler, scaler_filename)
 
     # Use random forest to check importance of features
-    rf_clf = RandomForestClassifier(bootstrap = True, n_estimators = 100, criterion = 'gini', random_state = 42)
+    rf_clf = RandomForestClassifier(n_estimators = 100, max_depth = 30, criterion = 'gini', random_state = 42)
     rf_clf_model = rf_clf.fit(X_train, y_train)
 
     # Plot the feature importance
@@ -98,7 +98,7 @@ def app():
 
     # 1. Logistic Regression (KK)
     st.subheader("Model 1 - Logistic Regression (Baseline)")
-    log_reg = LogisticRegression(random_state=42, solver='lbfgs', max_iter=150)
+    log_reg = LogisticRegression(random_state=42, solver='lbfgs', max_iter=100)
     log_reg_model = log_reg.fit(X_train, y_train)
     y_pred = log_reg_model.predict(X_test)
     st.text('Classification Report for Logistic Regression:\n ' + classification_report(y_test, y_pred))
@@ -153,7 +153,7 @@ def app():
 
     # Save model
     model_filename = 'model/randomforest_model.joblib'
-    joblib.dump(rf_clf_model, model_filename)
+    joblib.dump(rf_clf_model, model_filename, compress=4)
 
     del rf_clf_model
 
@@ -171,22 +171,7 @@ def app():
 
     del xgb_model
 
-    # 6. Voting Classifier (WL)
-    # st.subheader("Model 6 - Voting Classifier")
-    # vot_clf = VotingClassifier(estimators=[('rf', rf_clf), ('xgb', xgb_clf)], voting='soft', weights=[1, 2])
-    # votclf_model = vot_clf.fit(X_train, y_train)
-
-    # y_pred = votclf_model.predict(X_test)
-    # st.text('Classification Report for Voting Classifier:\n ' + classification_report(y_test, y_pred))
-    # st.text("Micro-Averaged F1 Score: " + str(f1_score(y_test, y_pred, average='micro')))
-
-    # # Save model
-    # model_filename = 'model/votclf_model.joblib'
-    # joblib.dump(votclf_model, model_filename)
-
-    # del votclf_model
-
-    # 5. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
+    # 6. Ordinal Classifier: https://towardsdatascience.com/simple-trick-to-train-an-ordinal-regression-with-any-classifier-6911183d2a3c (Wei Liang)
     # import class from OrdinalClassifier.py
     # st.subheader("Ordinal Classifier")
     # dt = DecisionTreeClassifier()
