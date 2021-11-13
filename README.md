@@ -1,6 +1,6 @@
 ## SECTION 1 : PROJECT TITLE
 ### Earthquake Damage Risk Assessor
-<img src="misc/logo.png" style="float: left; margin-right: 0px;" />
+<img src="misc/Front_page.png" style="float: left; margin-right: 0px;" />
 
 ## SECTION 2 : EXECUTIVE SUMMARY
 On Saturday, 25 April 2015, a 7.6 magnitude earthquake struck Gorkha Nepal. The devastating earthquake was followed by more than 300 aftershocks that has magnitude more than 4.0. These deadly impacts had caused widespread destruction across Nepal’s social and economic infrastructure, roads, residential houses, schools, government building, power plant and even century old heritage monuments. 
