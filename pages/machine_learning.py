@@ -172,7 +172,7 @@ def app():
 
             # Save model
             model_filename = 'model/randomforest_model.joblib'
-            joblib.dump(rf_clf_model, model_filename)
+            joblib.dump(rf_clf_model, model_filename, compress=9)
 
             del rf_clf_model
 
