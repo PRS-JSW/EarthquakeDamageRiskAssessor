@@ -128,4 +128,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Large files
 data/buildingsdata.db
+model/
