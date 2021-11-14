@@ -29,7 +29,7 @@ With the lesson learnt from the various report and studies, we would like to uti
 
 ## SECTION 5 : VIDEO PRESENTATION
 
-[![](http://img.youtube.com/vi/OBeyQfCPETg/0.jpg)](http://www.youtube.com/watch?v=OBeyQfCPETg "Video Presentation")
+[![](http://img.youtube.com/vi/GwPRqV66Pbw/0.jpg)](https://youtu.be/GwPRqV66Pbw "Video Presentation")
 
 
 ## SECTION 6 : SYSTEM ARCHITECTURE
